@@ -4,19 +4,28 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 namespace LabPOO
 {
+    public delegate void Del(string producto);
     class Program
     {
         public static List<Product> cart;
         public static List<Product> market;
+        public static List<Product> ingrediente;
 
         static void Main(string[] args)
         {
+            String pathGuardado = Directory.GetCurrentDirectory();
+
             cart = new List<Product>();
             market = new List<Product>();
             SupplyStore();
+
+
             while (true)
             {
                 PrintHeader();
@@ -41,6 +50,7 @@ namespace LabPOO
                     }
                     else if (answer == "3")
                     {
+
                         PrintCart();
                         break;
                     }
@@ -51,6 +61,13 @@ namespace LabPOO
                     }
                     else if (answer == "5")
                     {
+                        if (cart.Count > 0)
+                        {
+                            IFormatter formatter = new BinaryFormatter();
+                            Stream stream = new FileStream("Carrito.txt", FileMode.Create, FileAccess.Write);
+                            formatter.Serialize(stream, cart);
+                            stream.Close();
+                        }
                         Environment.Exit(1);
                     }
                 }
@@ -132,6 +149,10 @@ namespace LabPOO
         public static bool AddToCart(Product product)
         {
             return product.Agregar(cart);
+        }
+        public void RevisarCarrito(string producto)
+        {
+           
         }
 
         public static void SupplyStore()
